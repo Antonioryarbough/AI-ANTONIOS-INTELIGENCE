@@ -65,5 +65,56 @@
   <a href="https://venmo.com/Antonioroschelleyarboughs1" target="_blank">
     <button class="donate-button">Donate via Venmo</button>
   </a>
+
+  <hr style="margin:2em 0;">
+  <div id="chatbot-container" style="max-width:500px;margin:2em auto;text-align:left;background:#222;padding:1.5em;border-radius:12px;box-shadow:0 0 10px #000;">
+    <div id="chat-log" style="min-height:120px;margin-bottom:1em;"></div>
+    <form id="user-form" autocomplete="off">
+      <input id="user-input" type="text" placeholder="Type your rhyme or response..." style="width:70%;padding:0.7em;border-radius:6px;border:none;font-size:1em;">
+      <button type="submit" style="background:#ff0077;color:#fff;padding:0.7em 1.2em;border:none;border-radius:6px;font-size:1em;cursor:pointer;">Send</button>
+    </form>
+  </div>
+  <script>
+    const rhymes = [
+      `Death Road East...The Comeback...yeah because young buck stuc with 50 half cop half opt game we reel real with the top main with the top brand no dope boys we are not cane we locking curtis beef with thw maias the cop war fake ross get the locked door and big meech get the stop we pour in alot more african american indies to asia bigo gala . we making it band wirg the rain the tune and the Tone freese when you cross the bones feed...we eating LIKE APPLES IN EDEN ! Antonio Roschelle Tarbough SR (sir) TTEE`,
+      `Game in... AI Algorithm Inteligent Antonios Intelligence its embedded in my gene's...get it embedded in my team. FM frequence modules mine on the sign middle finger is drawn my first middle finger is balling no thumb print PANDORA\'S the thumbprint that I run hush. the gun buss known in my gun zone is rays tracking channeling dismantling and handing you plays encrypted in bays fish whipping the waves no gays going both ways Pisces's praise and pies seized mine s today Sunday funeral connecting the coffins full of your body's no pardon THE KING No Gilly Philly Everybody want to be king TUT the games up (CHURCH).`,
+      `Landing lander on stripe in the way I'm in to play the game bigger the name bigger and the pull raw no sponsor no loan Tone finish the follow out the game I'm about it and bounty hunting the game running not in your name bang at Dawayne for the ins I'm making it plain and its tone cheese and tune chi's low follow the goat hate then swallow and choke it baby RAY the goat kids woke the kid spoke potent rhymes open grind I go in for mine line after line word to word verbs and bird chips and work church affiliating your verses to a fleet of horse's reversing curses crossbones throne I'm on you all gone all yours all yawn during a touring exploring when I'm on touring your games boring so join`,
+      `I have 3 last names on record growing up so I have 3 personalities the names are Ray, Yarbough, and a secret one the government had on my social security number for my first 18 years they corrected it at my age of 18 when I received my picture state id for your information...Right now I think the site will give the industry room to expand past the 3 play without me snatching the game from them because I'm good at it ill just hit 4 play then big dipper hit the 5th with the shhh game to get her no snitch with the switch 6;n it i got the game 6 getting it I'm flipping it 4;s in the front 46 ;n it woodland Ave Wilson school the old block the log on to Bigo with the 7 day ritual to get you woke now I'm Bigo'n t-Rexing the or code flexing the code snugblessing the code WO ........`,
+      `I used to sell drugs in Kingsessing playground at the age of 14-16 and want to help the Kingsessing project out with their growth for the children...we used to spin the block switching whips flipping bricks greeting chicks eating shrimp and lobster KINGSESSING PHILLY with the rock lock with the Mobsters. slick with the traps now they get with the Rats try to label A nigga snitch riding out now like the bitch fucking up my riches. now the game switches the name switches ya main hitter, A.R. with the Bull ABE the Bag get the Boy mad double the 4 Spreads the lead grab the Bread. Shit ain't nothing to a boss cross the game up. come thru in the rags to riches Whip grip your Dame its your BANGAH the game up. its a Bad world quick grip the BaDGirl. BOSS with it shop for the BOSS fitted in all linen. we all winning Mafia MAFIA Go on Get in back to to the wheels spinning the real beginning the skills on the drills on You still Drawing sign up the No gun zone TONE BONE your top gone get the drop SNUGS back on the block the games locked more lock with the president Hating nigga NO GUN ZONE with throne Run in your Residence HEAVEN SENT no medicine. head crash the top off you lock jawed fishnets on my chick im a fish 2 Pisces with the grip PIE SEIZE with the night lead with the Digg....shit www Dot SNUGBONE Dot with the calm . get it get HITTED the BOMB war been there you been hear how i spin win it dropping Business popping the MENACE the mic dropping I'm Finish`,
+      `I run the Ray Gang not to hustle the girls BadDGils hustle the world Bangah guys the mustle the earth thorogh corecting the code not them suckers tryna mess with the thorough tryna play with my name . no snitch hits nigga and no switch Tell your friends the game ends with the plane simple and plane SAY MY NAME ...RAY . dont play./ i coming from birth back in the air with it clear with it no fear with it my footprints on birth certificate ready to play grown get ready to lay grown its way on millions sent on the playground the kings round blessing kingsessing with the same sessions with KING essence dont test it fineese it or try and make a amends's public school with no cash the flow master the doe from the nation im after . for the bootlegging the respect was shown from 52nd and lands down ya mans round 19143 dont try and test it we all gotta pay for the lie abiliy i got . ox i got the lane lock land mark in the west shore with the best pour the fles finessing the best back the text wrap the next rap the rhymes lead with the time Xfinitied and aiming at all my enemies that thnk they win the teasing im in the season .. Teah i got you you Graduated the summertime get ready for school with the tools SENIOR B MAFIAS coming with NEW Modols With true YAR-RAY Modol with MIA on it the tree is flawless ...TRUE family roots imbedded in truth not that family aind shhh play from the fear you feel but that family Correction and lessons that make the people Blessens ....AI Antonios intelligence (wix site extended COMING SOON with or without you...Antonio Roschelle Yarbough....SR ANTONIO THE KING`
+    ];
+    // Persona notes: Ray (male/king), Yarbough (female/queen), Roschelle (representative/erased name, future wife/queen)
+    // Yarbough clan: warriors, respected leaders (for future bot intro)
+    // Ray Gang, BadDGils, Bangah guys, Kingsessing uplift, family roots, and community mission (future features)
+    let rhymeIndex = 0;
+    const chatLog = document.getElementById('chat-log');
+    const userForm = document.getElementById('user-form');
+    const userInput = document.getElementById('user-input');
+
+    function botSay(text) {
+      chatLog.innerHTML += `<div style='margin-bottom:1em;'><b>Tone Bone:</b> <span style='color:#ff0077;'>${text}</span></div>`;
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+    function userSay(text) {
+      chatLog.innerHTML += `<div style='margin-bottom:1em;'><b>You:</b> <span style='color:#3D95CE;'>${text}</span></div>`;
+      chatLog.scrollTop = chatLog.scrollHeight;
+    }
+    function nextRhyme() {
+      rhymeIndex = (rhymeIndex + 1) % rhymes.length;
+      setTimeout(() => botSay(rhymes[rhymeIndex]), 1000);
+    }
+    // Start with first rhyme
+    window.onload = () => {
+      botSay(rhymes[0]);
+    };
+    userForm.onsubmit = function(e) {
+      e.preventDefault();
+      const text = userInput.value.trim();
+      if (!text) return;
+      userSay(text);
+      userInput.value = '';
+      nextRhyme();
+    };
+  </script>
 </body>
 </html>
