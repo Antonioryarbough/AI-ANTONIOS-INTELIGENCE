@@ -40,8 +40,8 @@
   <h2>🎤 Tone Bone's Cipher Classroom 🧠</h2>
 
   <div class="camera-feeds">
-    <div class="camera">📹 Feed 1 — Ray</div>
-    <div class="camera">📹 Feed 2 — Yarbough</div>
+  <video id="localVideo" class="camera" autoplay playsinline muted></video>
+  <video id="remoteVideo" class="camera" autoplay playsinline></video>
   </div>
 
   <p>✨ Choose your identity. ✨ Enter Cipher Mode. ✨ Graduate in rhyme.</p>
@@ -49,5 +49,75 @@
   <a href="https://tonebone-ai-model.vercel.app" target="_blank">
     <button class="enter-button">ENTER CLASSROOM</button>
   </a>
+
+  <script>
+    // WebRTC with Socket.IO signaling (room: 'auditions')
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+    let localStream;
+    let peerConnection;
+    const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+  const room = 'Auditions';
+
+    // Load Socket.IO client
+    const script = document.createElement('script');
+    script.src = '/socket.io/socket.io.js';
+    script.onload = () => startApp();
+    document.body.appendChild(script);
+
+    function startApp() {
+      const socket = io();
+  socket.emit('join', room);
+
+      async function startLocalStream() {
+        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        localVideo.srcObject = localStream;
+      }
+
+      async function createPeerConnection() {
+        peerConnection = new RTCPeerConnection(servers);
+        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        peerConnection.ontrack = event => {
+          remoteVideo.srcObject = event.streams[0];
+        };
+        peerConnection.onicecandidate = event => {
+          if (event.candidate) {
+            socket.emit('signal', { room, data: { candidate: event.candidate } });
+          }
+        };
+      }
+
+      socket.on('peer-joined', async () => {
+        await createPeerConnection();
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        socket.emit('signal', { room, data: { sdp: offer } });
+      });
+
+      socket.on('signal', async data => {
+        if (!peerConnection) {
+          await createPeerConnection();
+        }
+        if (data.sdp) {
+          if (data.sdp.type === 'offer') {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
+            const answer = await peerConnection.createAnswer();
+            await peerConnection.setLocalDescription(answer);
+            socket.emit('signal', { room, data: { sdp: answer } });
+          } else if (data.sdp.type === 'answer') {
+            await peerConnection.setRemoteDescription(new RTCSessionDescription(data.sdp));
+          }
+        } else if (data.candidate) {
+          try {
+            await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+          } catch (e) {
+            console.error('Error adding ICE candidate', e);
+          }
+        }
+      });
+
+      startLocalStream();
+    }
+  </script>
 </body>
 </html>
